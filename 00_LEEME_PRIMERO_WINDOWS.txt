@@ -1,0 +1,8 @@
+WINDOWS - DENTALCARE
+
+1) Abre CMD/PowerShell en la carpeta del proyecto.
+2) Ejecuta scripts\00_PREPARAR_WINDOWS.bat (solo la primera vez).
+3) Verifica las credenciales de Supabase en config\local.json.
+4) Ejecuta scripts\01_MENU_WINDOWS.bat.
+5) Elige Supabase en Android o Chrome.
+6) No uses flutter pub upgrade.

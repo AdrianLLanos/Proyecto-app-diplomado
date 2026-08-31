@@ -43,7 +43,7 @@ class _LoginScreenState extends State<LoginScreen> {
       );
       if (!mounted) return;
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute<void>(builder: (_) => const DashboardScreen()),
+        MaterialPageRoute<void>(builder: (_) => DashboardScreen(config: widget.config)),
       );
     } on AuthException catch (error) {
       if (mounted) setState(() => _error = error.message);
@@ -104,9 +104,12 @@ class _LoginScreenState extends State<LoginScreen> {
                             labelText: 'Correo electronico',
                             prefixIcon: Icon(Icons.alternate_email),
                           ),
-                          validator: (value) => value == null || !value.contains('@')
-                              ? 'Ingresa un correo valido'
-                              : null,
+                          validator: (value) {
+                            final email = value?.trim() ?? '';
+                            return RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$').hasMatch(email)
+                                ? null
+                                : 'Ingresa un correo valido';
+                          },
                         ),
                         const SizedBox(height: 14),
                         TextFormField(
@@ -124,9 +127,14 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                             ),
                           ),
-                          validator: (value) => value == null || value.isEmpty
-                              ? 'Ingresa tu contrasena'
-                              : null,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Ingresa tu contrasena';
+                            }
+                            return value.length < 6
+                                ? 'La contrasena debe tener al menos 6 caracteres'
+                                : null;
+                          },
                         ),
                         if (_error != null) ...<Widget>[
                           const SizedBox(height: 14),

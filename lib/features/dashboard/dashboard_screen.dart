@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../core/config/app_config.dart';
+import '../auth/login_screen.dart';
+import '../doctors/doctor_list_screen.dart';
 import '../modules/module_screen.dart';
+import '../patients/patient_list_screen.dart';
 
 class DashboardScreen extends StatelessWidget {
-  const DashboardScreen({super.key});
+  const DashboardScreen({super.key, required this.config});
+
+  final AppConfig config;
 
   static const _modules = <ClinicModule>[
     ClinicModule('Pacientes', 'Historias clinicas y datos de contacto', Icons.people_alt_outlined, 'pacientes'),
@@ -23,7 +30,16 @@ class DashboardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('DentalCare')),
+      appBar: AppBar(
+        title: const Text('DentalCare'),
+        actions: <Widget>[
+          IconButton(
+            tooltip: 'Cerrar sesion',
+            icon: const Icon(Icons.logout_outlined),
+            onPressed: () => _signOut(context),
+          ),
+        ],
+      ),
       body: LayoutBuilder(
         builder: (context, constraints) {
           final columns = constraints.maxWidth >= 900 ? 3 : constraints.maxWidth >= 600 ? 2 : 1;
@@ -50,7 +66,11 @@ class DashboardScreen extends StatelessWidget {
                     module: module,
                     onTap: () => Navigator.of(context).push(
                       MaterialPageRoute<void>(
-                        builder: (_) => ModuleScreen(module: module),
+                        builder: (_) => module.endpoint == 'pacientes'
+                            ? const PatientListScreen()
+                            : module.endpoint == 'doctores'
+                                ? const DoctorListScreen()
+                                : ModuleScreen(module: module),
                       ),
                     ),
                   );
@@ -60,6 +80,15 @@ class DashboardScreen extends StatelessWidget {
           );
         },
       ),
+    );
+  }
+
+  Future<void> _signOut(BuildContext context) async {
+    await Supabase.instance.client.auth.signOut();
+    if (!context.mounted) return;
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute<void>(builder: (_) => LoginScreen(config: config)),
+      (route) => false,
     );
   }
 }

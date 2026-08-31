@@ -3,6 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../core/config/app_config.dart';
 import '../auth/login_screen.dart';
+import '../appointments/appointment_list_screen.dart';
 import '../doctors/doctor_list_screen.dart';
 import '../modules/module_screen.dart';
 import '../patients/patient_list_screen.dart';
@@ -70,6 +71,8 @@ class DashboardScreen extends StatelessWidget {
                             ? const PatientListScreen()
                             : module.endpoint == 'doctores'
                                 ? const DoctorListScreen()
+                                : module.endpoint == 'citas'
+                                    ? const AppointmentListScreen()
                                 : ModuleScreen(module: module),
                       ),
                     ),
